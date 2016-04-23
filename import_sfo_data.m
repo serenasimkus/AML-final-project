@@ -10,7 +10,7 @@
 
 %% Initialize variables.
 % switch filename path to your local path
-filename = '/Users/georgeyu/Desktop/Classwork/AML/AML-final-project/sfo_data.csv';
+filename = '/Users/serena/Dropbox/ColumbiaSpring2016/AML_4772/project/sfo_data.csv';
 delimiter = ',';
 startRow = 2;
 
