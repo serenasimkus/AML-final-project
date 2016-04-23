@@ -33,5 +33,11 @@ fprintf('Test error for ridge regression model using least squares: %e\n', ridge
 % plot(ridgePred(1:2:size(ridgePred,1)), 'go');
 figure(4)
 plot(abs(lassoPred - y_test), 'ro');
+title('Lasso Prediction Difference for Test Data');
+xlabel('Data points');
+ylabel('Difference from actual');
 figure(5)
 plot(abs(ridgePred - y_test), 'go');
+title('Ridge Prediction Difference for Test Data');
+xlabel('Data points');
+ylabel('Difference from actual');
