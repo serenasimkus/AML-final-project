@@ -7,10 +7,12 @@ data = csvread('sfo_data_clean.csv', 2);
 
 percent_train = 0.8;
 
-x_train = data(1:0.8*m,1:n-1);
-y_train = data(1:0.8*m,n);
-x_test = data(0.8*m:m, 1:n-1);
-y_test = data(0.8*m:m,n);
+shuffled_data = data(randperm(m),:);
+
+x_train = shuffled_data(1:0.8*m,1:n-1);
+y_train = shuffled_data(1:0.8*m,n);
+x_test = shuffled_data(0.8*m:m, 1:n-1);
+y_test = shuffled_data(0.8*m:m,n);
 
 lassoOptions = struct('alpha', 1.0);
 lassoFit = cvglmnet(x_train, y_train, 'gaussian', lassoOptions);
