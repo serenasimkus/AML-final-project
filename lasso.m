@@ -28,6 +28,12 @@ cvglmnetPlot(ridgeFit, -1);
 ridgeError = norm(y_test - ridgePred);
 fprintf('Test error for ridge regression model using least squares: %e\n', ridgeError);
 
+ridge_acc = sum(ridgePred == y_test)/length(y_test);
+lasso_acc = sum(lassoPred == y_test)/length(y_test);
+
+ridge_within_one = sum(abs(ridgePred - y_test) <= 1)/length(y_test);
+lasso_within_one = sum(abs(lassoPred - y_test) <= 1)/length(y_test);
+
 % figure(3)
 % hold all
 % plot(y_test(1:2:size(y_test,1)), 'o')
