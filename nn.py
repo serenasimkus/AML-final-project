@@ -83,12 +83,16 @@ def main(num_epochs=500):
     # percentage within one
     within_one = T.mean(T.and_(T.le(T.argmax(test_pred, axis=1), target_var + 1), T.ge(T.argmax(test_pred, axis=1), target_var - 1)), dtype=theano.config.floatX)
 
+    # diff
+    each_diff = T.abs_(T.argmax(test_pred, axis=1) - target_var)
+
     # training function
     train_fn = theano.function([input_var, target_var], loss, updates=updates, allow_input_downcast=True)
 
     # testing function
-    test_fn = theano.function([input_var, target_var], [test_loss, test_acc, within_one], allow_input_downcast=True)
+    test_fn = theano.function([input_var, target_var], [test_loss, test_acc, within_one, each_diff], allow_input_downcast=True)
 
+    all_train_err = []
     # Train
     for epoch in range(num_epochs):
         train_err = 0
@@ -99,6 +103,7 @@ def main(num_epochs=500):
             train_err += train_fn(inputs, targets)
             train_batches += 1
 
+        all_train_err.append(train_err)
         print("Epoch {} of {} took {:.3f}s".format(
             epoch + 1, num_epochs, time.time() - start_time))
         print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
@@ -108,9 +113,14 @@ def main(num_epochs=500):
     test_acc = 0
     within_one = 0
     test_batches = 0
+    diff = None
     for batch in iterate_minibatches(X_test, Y_test, 100, shuffle=False):
         inputs, targets = batch
-        err, acc, one = test_fn(inputs, targets)
+        err, acc, one, each_diff = test_fn(inputs, targets)
+        if diff is None:
+            diff = each_diff
+        else:
+            diff = T.concatenate([diff, each_diff])
         test_err += err
         test_acc += acc
         within_one += one
@@ -122,6 +132,17 @@ def main(num_epochs=500):
     print("  test accuracy within one:\t\t{:.2f} %".format(
         within_one / test_batches * 100))
 
+    # plot training error
+    plt.figure(1)
+    plt.plot(all_train_err)
+    plt.ylabel('error')
+    plt.xlabel('epochs')
+
+    # plot predictions errs
+    plt.figure(2)
+    plt.plot(diff.eval(), 'o')
+    plt.ylabel('absolute difference')
+    plt.show()
     np.savez('nn_model.npz', lasagne.layers.get_all_param_values(network))
 
-main(100)
+main(500)
