@@ -34,6 +34,13 @@ lasso_acc = sum(lassoPred == y_test)/length(y_test);
 ridge_within_one = sum(abs(ridgePred - y_test) <= 1)/length(y_test);
 lasso_within_one = sum(abs(lassoPred - y_test) <= 1)/length(y_test);
 
+grouplassoOptions = struct('alpha', 1.0, 'multinomial', 'grouped');
+grouplassoFit = cvglmnet(x_train, y_train, 'mgaussian', grouplassoOptions);
+grouplassoPred = round(cvglmnetPredict(grouplassoFit, x_test, grouplassoFit.lambda_min));
+cvglmnetPlot(grouplassoFit, -1);
+grouplassoError = norm(y_test - grouplassoPred);
+fprintf('Test error for group lasso model using least squares: %e\n', grouplassoError);
+
 % figure(3)
 % hold all
 % plot(y_test(1:2:size(y_test,1)), 'o')
@@ -47,5 +54,10 @@ ylabel('Difference from actual');
 figure(5)
 plot(abs(ridgePred - y_test), 'go');
 title('Ridge Prediction Difference for Test Data');
+xlabel('Data points');
+ylabel('Difference from actual');
+figure(6)
+plot(abs(grouplassoPred - y_test), 'co');
+title('Group Lasso Prediction Difference for Test Data');
 xlabel('Data points');
 ylabel('Difference from actual');
