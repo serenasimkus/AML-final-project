@@ -4,6 +4,8 @@
 % components will cause accuracy to suffer. Uses pca + ordinary regression.
 % Plots loadings showing coefficients for each variable in generating the
 % first 30 principal components.
+
+% Looks like there are: 108 0s, 7 1s, 29 2s, 526 3s, 1507 4s, 740 5s, 40 6s
 clear all; close all; clc
 
 data = csvread('sfo_data_clean.csv', 2);
